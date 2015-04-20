@@ -13,7 +13,7 @@ To accomplish this, two major data sources were used.  The first is extensive ["
 
 Notably, a "water footprint per kcal" approach, very similar to the one employed below, has been suggested and utilized in published works by Mekonnen and Hoekstra. Joanna Pearlstein, the author of the Wired article (referenced above), concedes that their infographic "doesn't consider foods' nutritional properties.... a water-intensive food that was also high-calorie and highly nutritious might be worth it."
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(openxlsx) # read.xlsx
 library(ggplot2)
 sprdsht.ext = ".xlsx"
@@ -159,7 +159,7 @@ all.df[,c("gal.per.gcarbs.cali","gal.per.gcarbs.us","gal.per.gcarbs.global")] = 
 
 ***
 
-```{r echo=FALSE, eval=FALSE}
+```{r echo=FALSE, eval=FALSE, message=FALSE, warning=FALSE}
 library(googleVis)
 options(gvis.plot.tag = 'chart')
 
@@ -181,7 +181,7 @@ water.food.bar = gvisBarChart(all.df,
 plot(water.food.bar)
 ```
 
-```{r kcalpergal, fig.cap="", fig.height=5, fig.width=7, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE, eval=FALSE}
+```{r kcalpergal, fig.cap="", fig.height=5, fig.width=7, dpi=300, fig.align='center', message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE, eval=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, kcal.per.gal.us))
 
 ggplot(subset(all.df, !is.na(kcal.per.gal.us)), 
@@ -205,7 +205,7 @@ The graphic below presents the average gallons of water required to produce one 
 
 Calorie for Calorie, asparagus requires the most water to produce, followed by mangoes, beef, lamb, and pork. Dates require the least water per kcal, with garlic, carrots, pineapples, and onions not far behind.
 
-```{r galperkcal, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
+```{r galperkcal, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, kcal.per.gal.us))
 
 ggplot(subset(all.df, !is.na(gal.per.kcal.us)), 
@@ -233,7 +233,7 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.us)),
 
 The second graphic, below, is more directly related to the California drought. It instead displays the average gallons of water used in California to produce one nutritional calorie of 64 food products. The food products included are a subset of those in the analogous U.S. figure, above, but are limited to those for which a California-specific average was included in Mekonnen and Hoekstra's dataset.
 
-```{r galperkcalcali, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
+```{r galperkcalcali, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, kcal.per.gal.cali))
 
 ggplot(subset(all.df, !is.na(gal.per.kcal.cali)), 
@@ -261,7 +261,7 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.cali)),
 
 The third graphic is similar to the two above, but includes the global average gallons of water needed to produce one nutritional calorie of 80 food products.
 
-```{r galperkcalglobal, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
+```{r galperkcalglobal, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, kcal.per.gal.global))
 
 ggplot(subset(all.df, !is.na(gal.per.kcal.global)), 
@@ -288,7 +288,7 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.global)),
 
 The graphic below displays a different take on nutritional content: the average gallons of water required, in the U.S., to produce one gram of protein in 18 foods in "protein-rich" food product categories. Hazelnuts, walnuts, and beef perform worst, while soy milk, chicken, and eggs are the most water-efficient "proteins."
 
-```{r galpergprotein, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
+```{r galpergprotein, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, warning=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, gprotein.per.gal.us))
 
 ggplot(subset(all.df, is.finite(gal.per.gprotein.us)&(custom.categ.x%in%c("Dairy and Egg","Meat","Nuts and Seeds","Legumes"))), 
@@ -314,7 +314,7 @@ ggplot(subset(all.df, is.finite(gal.per.gprotein.us)&(custom.categ.x%in%c("Dairy
  	ggtitle("Average gallons of water required in the U.S.\nto produce one gram of protein,\nlisted by food product and category")
 ```
 
-```{r, echo=FALSE, eval=FALSE}
+```{r, echo=FALSE, eval=FALSE, message=FALSE, warning=FALSE}
 library(rCharts)
 options(
   rcharts.mode = 'iframesrc', 
