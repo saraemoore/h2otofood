@@ -7,7 +7,7 @@ output:
     theme: flatly
 ---
 
-The graphics below are an attempt to improve upon some of the recently published drought-related (info)graphics regarding water use for food production.  (Relevant examples include this [LA Times graphic](http://graphics.latimes.com/food-water-footprint/), published on 7 April 2015, and "[Wired's guide to produce that won't make the drought worse](http://www.wired.com/2015/04/wireds-guide-produce-wont-make-drought-worse/)," published on 15 April 2015.) The major issue with these approaches is the metric they employ: the number of gallons of water required to produce some weight (ounces, grams, etc.) of a given food.  The approach used below instead assesses the number of gallons of water required to produce a unit of nutritional value for each food (Calories or grams of protein, for example).
+The graphics below are an attempt to improve upon some of the recently published drought-related (info)graphics regarding water use for food production.  (Relevant examples include this [LA Times graphic](http://graphics.latimes.com/food-water-footprint/) and [supplementary graphics on nuts](http://www.latimes.com/local/lanow/la-me-g-how-water-hungry-are-californias-nuts-20150408-htmlstory.html), published on 7 and 9 April 2015, respectively, and "[Wired's guide to produce that won't make the drought worse](http://www.wired.com/2015/04/wireds-guide-produce-wont-make-drought-worse/)," published on 15 April 2015.) The major issue with these approaches is the metric they employ: the number of gallons of water required to produce some weight (ounces, grams, etc.) of a given food.  The approach used below instead assesses the number of gallons of water required to produce a unit of nutritional value for each food (Calories or grams of protein, for example).
 
 To accomplish this, two major data sources were used.  The first is extensive ["water footprint" data by Mekonnen and Hoekstra](http://waterfootprint.org) on both crops and farm animal products. This is the same data source used by the LA Times and Wired (above). The second data source was the [USDA National Nutrient Database](http://ndb.nal.usda.gov/).  More details, along with a full list of references, are provided at the end of this document.
 
@@ -136,6 +136,9 @@ colnames(all.df) = gsub("µ","mc",colnames(all.df))
 all.df$custom.categ.x = factor(all.df$custom.categ.x,
 	levels=c("Fruits and veggies", "Grains and Starch", "Legumes", "Nuts and Seeds", "Dairy and Egg", "Meat"))
 
+# manual correction to soy milk
+all.df[grep("soy milk",all.df$Description, ignore.case=TRUE),c("global.total","us.total")]=7.580173
+
 # kcal per gallon:
 all.df[,c("kcal.per.gal.cali","kcal.per.gal.us","kcal.per.gal.global")] = all.df[,"Energ_Kcal"]/all.df[,c("cali.total","us.total","global.total")]
 # gallon per kcal:
@@ -200,7 +203,7 @@ ggplot(subset(all.df, !is.na(kcal.per.gal.us)),
 
 The graphic below presents the average gallons of water required to produce one nutritional calorie of 78 food products of the United States. All food products in the LA Times graphic (referenced above) are included below except sparkling wine, for which nutritional information was not available in the USDA's NDB, and goat meat, for which U.S. water footprint information was not available in Mekonnen and Hoekstra's dataset.
 
-Calorie for Calorie, asparagus requires the most water to produce, followed by mangoes, beef, soy milk, lamb, and pork. Dates require the least water per kcal, with garlic, carrots, pineapples, onions, and brown rice not far behind.
+Calorie for Calorie, asparagus requires the most water to produce, followed by mangoes, beef, lamb, and pork. Dates require the least water per kcal, with garlic, carrots, pineapples, and onions not far behind.
 
 ```{r galperkcal, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, kcal.per.gal.us))
@@ -225,6 +228,7 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.us)),
  		axis.text.x = element_text(size=10),
  		legend.text=element_text(size=9)) +
  	ggtitle("Average gallons of water required in the U.S.\nto produce one Calorie,\nlisted by food product and category")
+# ggsave(filename = "gal_to_kcal_us.png", width = 6, height =7, units = "in", dpi = 300)
 ```
 
 The second graphic, below, is more directly related to the California drought. It instead displays the average gallons of water used in California to produce one nutritional calorie of 64 food products. The food products included are a subset of those in the analogous U.S. figure, above, but are limited to those for which a California-specific average was included in Mekonnen and Hoekstra's dataset.
@@ -282,7 +286,7 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.global)),
  	ggtitle("Average gallons of water required globally\nto produce one Calorie,\nlisted by food product and category")
 ```
 
-The graphic below displays a different take on nutritional content: the average gallons of water required, in the U.S., to produce one gram of protein in 77 food products. Foods which contain very little protein perform poorly by this metric. However, among "proteins" (meats, eggs, legumes, nuts, and seeds), hazelnuts, soy milk, walnuts, and beef perform worst, while chicken, eggs, pistachios, and sunflower seeds are the most water-efficient protein sources.
+The graphic below displays a different take on nutritional content: the average gallons of water required, in the U.S., to produce one gram of protein in 77 food products. Foods which contain very little protein perform poorly by this metric. However, among "proteins" (meats, eggs, legumes, nuts, and seeds), hazelnuts, walnuts, and beef perform worst, while soy milk, chicken, and eggs are the most water-efficient protein sources.
 
 ```{r galpergprotein, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, gprotein.per.gal.us))
@@ -338,6 +342,8 @@ Water footprint data encompasses so-called "blue" (fresh surface and groundwater
 
 [Google's unit converter](https://www.google.com/search?q=unit+converter#q=cubic+meters+per+ton+to+gallons+per+100+grams) was used to calculate a "scaling factor" to convert the water footprint data from cubic meters of water per metric ton of food product to gallons of water per 100 grams of food product. The units used in the USDA's database were nutritional value (Calories, grams of protein, etc.) per 100 grams of food (edible portion). Food products were manually matched between the two databases. Subsequently, the quotient of these two metrics was calculated for each food product, yielding gallons of water needed to produce a given nutritional value unit.
 
+Note that, Ercin, Aldaya, & Hoekstra (2012), feedback received on twitter, and the [LA Times' correction on 12 April 2015](http://www.latimes.com/local/corrections/la-a4-correx-20150412-story.html), the figure for U.S. average gallons of water required to produce 100 grams of soy milk has been manually corrected from 84.92338 gal/100g to 7.580173 gal/100g.  This figure is for global, not U.S., production (China, France, and Canada).
+
 Code (as an RMarkdown file) and data files required to reproduce this analysis are available [on github](http://github.com/saraemoore/h2otofood).
 
 ***
@@ -352,6 +358,7 @@ Mekonnen, M.M. and Hoekstra, A.Y. (2010) The green, blue and grey water footprin
 
 Data file used in this analysis: [Water footprints of crops and derived crop products (1996-2005)](http://waterfootprint.org/media/downloads/Report47-Appendix-II.zip)
 
+Ercin, A.E., Aldaya, M.M. and Hoekstra, A.Y. (2012) The water footprint of soy milk and soy burger and equivalent animal products, Ecological Indicators, 18: 392−402. Available at: http://waterfootprint.org/media/downloads/Ercin-et-al-2012-WaterFootprintSoy_1.pdf
 
 Mekonnen, M.M. and Hoekstra, A.Y. (2012) A global assessment of the water footprint of farm animal products, Ecosystems, 15(3): 401–415. Available at: http://waterfootprint.org/media/downloads/Mekonnen-Hoekstra-2012-WaterFootprintFarmAnimalProducts_1.pdf
 
