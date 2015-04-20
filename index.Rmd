@@ -286,12 +286,12 @@ ggplot(subset(all.df, !is.na(gal.per.kcal.global)),
  	ggtitle("Average gallons of water required globally\nto produce one Calorie,\nlisted by food product and category")
 ```
 
-The graphic below displays a different take on nutritional content: the average gallons of water required, in the U.S., to produce one gram of protein in 77 food products. Foods which contain very little protein perform poorly by this metric. However, among "proteins" (meats, eggs, legumes, nuts, and seeds), hazelnuts, walnuts, and beef perform worst, while soy milk, chicken, and eggs are the most water-efficient protein sources.
+The graphic below displays a different take on nutritional content: the average gallons of water required, in the U.S., to produce one gram of protein in 18 foods in "protein-rich" food product categories. Hazelnuts, walnuts, and beef perform worst, while soy milk, chicken, and eggs are the most water-efficient "proteins."
 
 ```{r galpergprotein, fig.cap="", fig.height=7, fig.width=6, dpi=300, fig.align='center', message=FALSE, echo=FALSE, cache=FALSE}
 all.df = transform(all.df, custom.descrip.x = reorder(custom.descrip.x, gprotein.per.gal.us))
 
-ggplot(subset(all.df, is.finite(gal.per.gprotein.us)), 
+ggplot(subset(all.df, is.finite(gal.per.gprotein.us)&(custom.categ.x%in%c("Dairy and Egg","Meat","Nuts and Seeds","Legumes"))), 
  		aes(x = custom.descrip.x, fill = custom.categ.x)) +
  	geom_bar(stat="identity", ymin=0, width=0.75, 
  		aes(y=gal.per.gprotein.us, ymax=gal.per.gprotein.us), position="dodge") +
@@ -300,7 +300,9 @@ ggplot(subset(all.df, is.finite(gal.per.gprotein.us)),
  	scale_y_continuous("Gallons of water per gram of protein", 
  		expand = c(0, 0),
  		limits = c(0, max(subset(all.df, is.finite(gal.per.gprotein.us))$gal.per.gprotein.us,na.rm=TRUE)+10)) +
-	scale_fill_hue("", h=c(30, 300), c = 65, l = 75, h.start=125) +
+	scale_fill_hue("", h=c(30, 300), c = 65, l = 75, h.start=125,
+		drop=TRUE,
+		limits = levels(all.df$custom.categ.x)) +
  	coord_flip() + theme_classic() +
  	theme(axis.text.y = element_blank(),
  		axis.title.y=element_blank(),
